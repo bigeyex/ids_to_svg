@@ -1,0 +1,39 @@
+IDS String: <input type="text" id="idsText"/>
+<button onclick="makeCharacter()">Generate</button>
+<canvas id="canvas" width="400" height="400"></canvas>
+<p id="loadingFontTag">loading font...</p>
+<script>var exports = {};</script>
+<script src="https://cdn.jsdelivr.net/npm/fabric@6.4.3/dist/index.js"></script>
+<script src="./dist/index.browser.js"></script>
+
+<script>
+  const canvas = new fabric.Canvas('canvas');
+  var idsToSvg = null;
+
+  window.IdsToSvg.fromFontAsync('./fonts/SourceHanSerifCNRegular.otf', {}).then((inst) => {
+    idsToSvg = inst;
+    document.getElementById('loadingFontTag').remove();
+  })
+
+  function makeCharacter() {
+    let idsString = document.getElementById('idsText').value;
+    const svgString = idsToSvg.svgFromIds(idsString);
+    canvas.clear();
+    fabric.loadSVGFromString(svgString).then(({objects}) => {
+        objects.forEach(object => {
+            object.set({ left: object.left*5+20, top: object.top*5+20, scaleX: 5, scaleY: 5 });    
+            object.setCoords();
+            canvas.add(object);
+        })
+        canvas.renderAll();
+    });
+    
+  }
+
+</script>
+
+<style>
+    canvas {
+        border: 1px solid orange;
+    }
+</style>
